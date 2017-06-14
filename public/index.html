@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html ng-app='shortUrlapp'>
+    <head>
+        <title>URL Shortener Microservice</title>
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular.js'></script>
+        <script src="/js/app.js"></script>
+    </head>
+    <body>
+        <header>URL Shortener Microservice</header>
+        <section ng-controller='shortAppCtrl'>
+            <input placeholder = 'Enter URL' ng-model = 'urlToShorten'>
+            <a class = 'btn btn-primary' ng-href = '/new/{{urlToShorten}}'>Get ShortUrl</a>
+        </section>
+    </body>
+</html>

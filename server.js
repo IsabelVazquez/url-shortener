@@ -7,15 +7,14 @@ const mongoose = require('mongoose');
 app.use(bodyParser.json());
 app.use(cors());
 
-/*app.get('/', function (req, res) {
-  res.sendFile(process.cwd() + '/index.html');
-});*/
+app.use(express.static(__dirname + '/public'));
 
-app.get('/:urlToShorten(*)', function (req, res) {
-  var urltoShorten = req.params.urlToShorten;
-  res.json({"urlToShorten" : urltoShorten})
+//having issues with this 
+app.get('/new/:urlToShorten', function (res, req) {
+    var urlToShorten = req.params.urlToShorten;
+    return res.send({'urlToShorten': urlToShorten});
 })
 
-app.listen(8080, function () {
-  console.log('Example app listening on port 8080!')
+app.listen(process.env.PORT || 8080, function (){
+    console.log('Listening on port 8080.');
 })
