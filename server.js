@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const shortUrl = require('./models/shortUrl.js');
 
 //pluralized db
-mongoose.connect(process.env.MONGODB_URI);
+mongoose.MongoClient.connect(process.env.MONGODB_URI);
 
 
 app.use(bodyParser.json());
