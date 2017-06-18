@@ -3,10 +3,11 @@ const app = express();
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const shortUrl = require('./models/shortUrl.js');
+const urlSchema = require('./models/shortUrl.js');
 
-//pluralized db
-mongoose.connect(process.env.MONGODB_URI);
+//connect to our db (MONGODB_URI)
+mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/shortUrls');
+mongoose.Promise = global.Promise;
 
 
 app.use(bodyParser.json());
@@ -14,31 +15,34 @@ app.use(cors());
 
 app.use(express.static(__dirname + '/public'));
 
-app.get('/new/:url', function (req, res) {
+app.get('/new/:url(*)', function (req, res) {
     var urlToShorten = req.params.url;
     var regex = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
-    if(regex.test(urlToShorten)) {
+    
+    if(regex.test(urlToShorten) === true) {
         var short = Math.floor(Math.random()*100000).toString();
-        var data = new shortUrl({
+        //potential document
+        var data = new urlSchema({
             originalUrl: urlToShorten,
             shorterUrl: short
-        });
-        data.save(function (err) {
+        }).save(function (err) {
             if (err) {
                 return res.send('Error saving to database');
             }
         });
+        
         return res.json({
-            'urlToShorten': urlToShorten,
-            'shorterUrl': short
+            originalUrl: urlToShorten,
+            shorterUrl: short
         });
     }
+    return res.json({'urlToShorten': 'Failed'});
 });
 
 //redirect
 app.get('/:urlToForward', function (req, res) {
     var shorterUrl = req.params.urlToForward;
-    shortUrl.findOne({'shorterUrl': shorterUrl}, function (err, data) {
+    urlSchema.findOne({'shorterUrl': shorterUrl}, function (err, data) {
         if (err) {
             return res.send('Error reading the database');
         }
@@ -52,6 +56,7 @@ app.get('/:urlToForward', function (req, res) {
         }
     });
 });
+
 
 app.listen(process.env.PORT, function (){
     console.log('Listening on port.');
